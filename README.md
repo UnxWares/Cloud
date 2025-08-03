@@ -1,10 +1,10 @@
 <div align="center"><img src="https://github.com/UnxWares/.github/blob/main/unxwares-logo.png?raw=true" align="center" height="" width="400" /></div>  
 
-# <div align="center">Bienvenue 👋 sur le dépôt du site du Studio d'UnxWares</div>
+# <div align="center">Bienvenue 👋 sur le dépôt du site du Cloud d'UnxWares</div>
 
-🇫🇷 Ici vous retrouverez tout le code du site du Studio d'UnxWares, accessible
+🇫🇷 Ici vous retrouverez tout le code du site du Cloud d'UnxWares, accessible
 <br/>
-🇺🇸 Here you will find all the code for the UnxWares showcase site, accessible
+🇺🇸 Here you will find all the code for the UnxWares Cloud site, accessible
 
 # 📜 Documentation
 
