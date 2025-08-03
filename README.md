@@ -1,61 +1,46 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center"><img src="https://github.com/UnxWares/.github/blob/main/unxwares-logo.png?raw=true" align="center" height="" width="400" /></div>  
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# <div align="center">Bienvenue 👋 sur le dépôt du site du Studio d'UnxWares</div>
 
-## About Laravel
+🇫🇷 Ici vous retrouverez tout le code du site du Studio d'UnxWares, accessible
+<br/>
+🇺🇸 Here you will find all the code for the UnxWares showcase site, accessible
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# 📜 Documentation
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+🇫🇷 Voici les commandes nécessaire afin de déployer le projet
+<br/>
+🇺🇸 Here are the commands needed to deploy the project
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Installer les dépendances / Install dependencies
 
-## Learning Laravel
+```bash
+pnpm install
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Déployer les versions de développement / Deploy development versions
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Faire avec Laravel Herd\
+Do it with Laravel Herd
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Déployer en production / Deploy to production
+Avec Nginx\
+With Nginx
 
-## Laravel Sponsors
+# ⚠️ Propriété intellectuelle / intellectual property
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+🇫🇷 Attention, tout le code d'UnxWares est soumis à la propriété intellectuelle. Nous sommes une entreprise, toute reproduction / réutilisation en l'état est interdit et illégal. UnxWares est une marque déposée, et tout est protégé. Il vous est strictement interdit d'utiliser ce code afin d'usurper, de copier, et de faire tout autre atteinte à UnxWares.
+<br/>
+<br/>
+🇺🇸 Please note that all UnxWares code is subject to intellectual property law. We are a company; any reproduction or reuse as is is prohibited and illegal. UnxWares is a registered trademark, and everything is protected. You are strictly prohibited from using this code to usurp, copy, or infringe UnxWares' rights.
 
-### Premium Partners
+# 🌍 Notre ouverture vers l'Open Source / our openness to Open Source
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+🇫🇷 Chez UnxWares, nous avons à cœur de soutenir activement l’Open Source. Bien que nous restions une entreprise et que notre travail soit naturellement protégé, l’ouverture et le partage font partie intégrante de nos valeurs. C’est pourquoi une grande partie du code que nous produisons est publiée et accessible publiquement. Nous considérons le partage de code comme un pilier fondamental : permettre à d'autres développeurs de s’inspirer, de réutiliser et d’améliorer ce que nous créons est pour nous une évidence. Chaque projet que nous menons a vocation à être utile au-delà de notre propre usage. Cela dit, nous demandons à ce que notre propriété intellectuelle soit respectée. Le code ne peut donc pas être repris dans son intégralité à des fins commerciales sans notre accord explicite. Toutefois, chaque module, composant ou fonctionnalité publié est conçu pour être réutilisable, modifiable et enrichi par la communauté. Nous sommes convaincus qu’un écosystème logiciel pérenne repose sur la collaboration, la transparence et l’innovation partagée.
+<br/>
+<br/>
+🇺🇸 At UnxWares, we are deeply committed to actively supporting Open Source. While we remain a company and our work is naturally protected, openness and sharing are core values we uphold. That’s why a significant portion of the code we produce is published and made publicly accessible. We see code sharing as a fundamental pillar: enabling other developers to draw inspiration from, reuse, and improve upon what we create is a given for us. Every project we work on is intended to be useful beyond our own needs. That said, we ask that our intellectual property be respected. As such, our code cannot be reused in its entirety for commercial purposes without our explicit permission. However, each module, component, or feature we release is designed to be reusable, adaptable, and enhanced by the community. We firmly believe that a sustainable software ecosystem relies on collaboration, transparency, and shared innovation.
 
-## Contributing
+# Merci ❤️
+UnxWares SAS (Studio & Cloud) - SIREN 945207991 - UnxWares © 2023-2025 - Tous droits réservés
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
