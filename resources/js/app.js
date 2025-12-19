@@ -1,7 +1,10 @@
 import './bootstrap';
-
 import { createInertiaApp } from '@inertiajs/svelte'
 import { mount } from 'svelte'
+import { theme } from './lib/theme.js'
+
+// Initialiser le thème au chargement
+theme.subscribe(() => {})
 
 createInertiaApp({
   resolve: name => {

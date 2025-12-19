@@ -1,0 +1,95 @@
+// Couleurs principales UnxWares
+$primary: #050c9c;
+$primary-dark: #030a7a;
+$primary-light: #0710c4;
+$primary-bg: #eff6ff;
+
+// Couleurs neutres
+$white: #ffffff;
+$black: #000000;
+
+// Grays
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+// États
+$success: #10b981;
+$warning: #f59e0b;
+$error: #ef4444;
+$info: #3b82f6;
+
+// Variables CSS pour le thème
+:root {
+  // Couleur primaire
+  --color-primary: #{$primary};
+  --color-primary-dark: #{$primary-dark};
+  --color-primary-light: #{$primary-light};
+  --color-primary-bg: #{$primary-bg};
+
+  // Backgrounds
+  --bg-primary: #{$white};
+  --bg-secondary: #{$gray-50};
+  --bg-tertiary: #{$gray-100};
+
+  // Texte
+  --text-primary: #{$gray-900};
+  --text-secondary: #{$gray-500};
+  --text-tertiary: #{$gray-400};
+
+  // Borders
+  --border-color: #{$gray-200};
+  --border-color-light: #{$gray-100};
+
+  // Ombres
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* SAUVEGARDE - Version neutre (Material Design style)
+html.dark {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2a2a2a;
+  --text-primary: #ececec;
+  --text-secondary: #9e9e9e;
+  --text-tertiary: #757575;
+  --border-color: #2a2a2a;
+  --border-color-light: #1e1e1e;
+}
+*/
+
+// Dark mode - Mix ultra-subtil (presque neutre)
+html.dark {
+  // Backgrounds - Micro-micro teinte presque imperceptible
+  --bg-primary: #141416;
+  --bg-secondary: #1d1d20;
+  --bg-tertiary: #27272b;
+
+  // Couleur primaire pour dark mode
+  --color-primary-bg: rgba(5, 12, 156, 0.15);
+
+  // Texte
+  --text-primary: #ededf0;
+  --text-secondary: #9e9ea3;
+  --text-tertiary: #76767a;
+
+  // Borders
+  --border-color: #2a2a2e;
+  --border-color-light: #1f1f22;
+
+  // Ombres
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+}
