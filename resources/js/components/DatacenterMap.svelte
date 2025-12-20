@@ -27,49 +27,120 @@
     selectedDatacenter = selectedDatacenter === dc ? null : dc
   }
 
-  // Positions réelles des datacenters UnxWares (coordonnées sur la carte détaillée)
-  const datacenterPositions = {
+  // Coordonnées GPS réelles des villes
+  const cityCoordinates = {
     // France
-    'Paris': { top: '70%', left: '30%', country: 'France' },
-    'Caen': { top: '68%', left: '26%', country: 'France' },
-    'Lyon': { top: '73%', left: '34%', country: 'France' },
-    'Marseille': { top: '77%', left: '33%', country: 'France' },
+    'Paris': { lat: 48.86, lon: 2.35, country: 'France' },
+    'Caen': { lat: 49.18, lon: -0.37, country: 'France' },
+    'Lyon': { lat: 45.76, lon: 4.84, country: 'France' },
+    'Marseille': { lat: 43.30, lon: 5.40, country: 'France' },
 
     // Allemagne
-    'Frankfurt': { top: '70%', left: '38%', country: 'Allemagne' },
-    'Munich': { top: '73%', left: '41%', country: 'Allemagne' },
-    'Berlin': { top: '66%', left: '43%', country: 'Allemagne' },
+    'Frankfurt': { lat: 50.11, lon: 8.68, country: 'Allemagne' },
+    'Munich': { lat: 48.14, lon: 11.58, country: 'Allemagne' },
+    'Berlin': { lat: 52.52, lon: 13.40, country: 'Allemagne' },
 
     // Pays-Bas
-    'Amsterdam': { top: '66%', left: '32%', country: 'Pays-Bas' },
+    'Amsterdam': { lat: 52.37, lon: 4.89, country: 'Pays-Bas' },
 
     // Royaume-Uni
-    'London': { top: '69%', left: '19%', country: 'Royaume-Uni' },
-    'Manchester': { top: '65%', left: '18%', country: 'Royaume-Uni' },
+    'London': { lat: 51.51, lon: -0.13, country: 'Royaume-Uni' },
+    'Manchester': { lat: 53.48, lon: -2.24, country: 'Royaume-Uni' },
 
     // Espagne
-    'Madrid': { top: '81%', left: '19%', country: 'Espagne' },
-    'Barcelona': { top: '76%', left: '28%', country: 'Espagne' },
+    'Madrid': { lat: 40.42, lon: -3.70, country: 'Espagne' },
+    'Barcelona': { lat: 41.39, lon: 2.16, country: 'Espagne' },
 
     // Italie
-    'Milan': { top: '73%', left: '39%', country: 'Italie' },
-    'Rome': { top: '78%', left: '41%', country: 'Italie' },
+    'Milan': { lat: 45.46, lon: 9.19, country: 'Italie' },
+    'Rome': { lat: 41.90, lon: 12.50, country: 'Italie' },
 
     // Europe de l'Est
-    'Warsaw': { top: '67%', left: '49%', country: 'Pologne' },
-    'Prague': { top: '70%', left: '43%', country: 'République Tchèque' },
+    'Warsaw': { lat: 52.23, lon: 21.01, country: 'Pologne' },
+    'Prague': { lat: 50.08, lon: 14.44, country: 'République Tchèque' },
 
     // Nord
-    'Stockholm': { top: '57%', left: '40%', country: 'Suède' },
-    'Copenhagen': { top: '62%', left: '36%', country: 'Danemark' }
+    'Stockholm': { lat: 59.33, lon: 18.07, country: 'Suède' },
+    'Copenhagen': { lat: 55.68, lon: 12.57, country: 'Danemark' }
+  }
+
+  // Villes de référence avec leurs positions correctes sur la carte
+  const referencePoints = {
+    'Caen': { top: 68, left: 26 },
+    'Paris': { top: 70, left: 30 },
+    'London': { top: 62, left: 27 },
+    'Stockholm': { top: 40, left: 50 },
+    'Madrid': { top: 87, left: 23 },
+    'Lyon': { top: 76, left: 33 },
+    'Frankfurt': { top: 67, left: 38 }
+  }
+
+  // Calculer les coefficients de régression linéaire pour mapper lat/lon vers top/left
+  function calculateLinearRegression(points) {
+    const n = points.length
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0
+
+    for (const point of points) {
+      sumX += point.x
+      sumY += point.y
+      sumXY += point.x * point.y
+      sumX2 += point.x * point.x
+    }
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
+    const intercept = (sumY - slope * sumX) / n
+
+    return { slope, intercept }
+  }
+
+  // Préparer les données pour la régression
+  const latPoints = []
+  const lonPoints = []
+
+  for (const [city, pos] of Object.entries(referencePoints)) {
+    const coords = cityCoordinates[city]
+    latPoints.push({ x: coords.lat, y: pos.top })
+    lonPoints.push({ x: coords.lon, y: pos.left })
+  }
+
+  // Calculer les régressions
+  const latRegression = calculateLinearRegression(latPoints)
+  const lonRegression = calculateLinearRegression(lonPoints)
+
+  // Fonction pour calculer la position sur la carte à partir des coordonnées GPS
+  function calculatePosition(city, lat, lon) {
+    // Si c'est une ville de référence, utiliser la position exacte
+    if (referencePoints[city]) {
+      return {
+        top: `${referencePoints[city].top}%`,
+        left: `${referencePoints[city].left}%`
+      }
+    }
+
+    // Sinon, calculer avec la régression linéaire
+    const top = Math.round(latRegression.slope * lat + latRegression.intercept)
+    const left = Math.round(lonRegression.slope * lon + lonRegression.intercept)
+    return { top: `${top}%`, left: `${left}%` }
+  }
+
+  // Générer les positions pour tous les datacenters
+  const datacenterPositions = {}
+  for (const [city, coords] of Object.entries(cityCoordinates)) {
+    const position = calculatePosition(city, coords.lat, coords.lon)
+    datacenterPositions[city] = {
+      top: position.top,
+      left: position.left,
+      country: coords.country
+    }
   }
 </script>
 
 <div class="map-container">
   <h3>Localisation des déploiements</h3>
 
-  <div class="map-wrapper">
-    <div class="map-background">
+  <div class="map-outer">
+    <div class="map-wrapper">
+      <div class="map-background">
       <svg class="map-svg" version="1.0" xmlns="http://www.w3.org/2000/svg"
        width="1110.000000pt" height="1280.000000pt" viewBox="0 0 1110.000000 1280.000000"
        preserveAspectRatio="xMidYMid meet">
@@ -647,6 +718,7 @@
         </div>
       {/if}
     {/each}
+    </div>
   </div>
 
   <div class="datacenter-list">
@@ -683,14 +755,19 @@
     margin: 0 0 1.5rem 0;
   }
 
-  .map-wrapper {
-    position: relative;
-    width: 100%;
-    height: 300px;
+  .map-outer {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     margin-bottom: 1.5rem;
+  }
+
+  .map-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    height: 300px;
+    margin: 1rem auto;
     overflow: hidden;
   }
 
