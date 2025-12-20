@@ -91,24 +91,24 @@
 <div class="dashboard-layout">
   <Sidebar />
 
-  <main class="main-content" style="--sidebar-width: {sidebarWidth}px">
+  <main id="main-content" class="main-content" style="--sidebar-width: {sidebarWidth}px">
     <header class="page-header">
-      <div class="header-content">
-        <h1>Déploiements</h1>
-        <p class="subtitle">Gérez tous vos services déployés</p>
-      </div>
+      <h1>Déploiements</h1>
+      <p class="subtitle">Gérez tous vos services déployés</p>
     </header>
 
     <div class="content-wrapper">
       <!-- Filtres -->
-      <div class="filters-bar">
+      <section class="filters-section" aria-label="Filtres de recherche">
+        <form class="filters-bar" onsubmit={(e) => e.preventDefault()}>
           <ServicePackSelector
             {servicePacks}
             {selectedPack}
             onSelectPack={(pack) => selectedPack = pack}
           />
 
-          <select bind:value={selectedService} class="filter-select" aria-label="Filtrer par service">
+          <label class="visually-hidden" for="service-filter">Filtrer par service</label>
+          <select id="service-filter" bind:value={selectedService} class="filter-select">
             <option value="all">Tous les services</option>
             {#each availableServices as service}
               <option value={service.id}>{service.name}</option>
@@ -116,16 +116,18 @@
           </select>
 
           <div class="search-box">
-            <Search size={18} />
+            <Search size={18} aria-hidden="true" />
+            <label class="visually-hidden" for="search-input">Rechercher un déploiement</label>
             <input
-              type="text"
+              id="search-input"
+              type="search"
               placeholder="Rechercher un déploiement..."
               bind:value={searchQuery}
-              aria-label="Rechercher un déploiement"
             />
           </div>
 
-          <select bind:value={statusFilter} class="filter-select" aria-label="Filtrer par statut">
+          <label class="visually-hidden" for="status-filter">Filtrer par statut</label>
+          <select id="status-filter" bind:value={statusFilter} class="filter-select">
             <option value="all">Tous les statuts</option>
             <option value="running">En cours</option>
             <option value="stopped">Arrêté</option>
@@ -133,52 +135,56 @@
             <option value="error">Erreur</option>
           </select>
 
-          <select bind:value={datacenterFilter} class="filter-select" aria-label="Filtrer par datacenter">
+          <label class="visually-hidden" for="datacenter-filter">Filtrer par datacenter</label>
+          <select id="datacenter-filter" bind:value={datacenterFilter} class="filter-select">
             <option value="all">Tous les datacenters</option>
             {#each datacenters as dc}
               <option value={dc}>{dc}</option>
             {/each}
           </select>
-        </div>
+        </form>
+      </section>
 
-        <!-- Stats -->
-        <div class="stats-row">
-          <div class="stat-card">
-            <span class="stat-value">{deployments.length}</span>
-            <span class="stat-label">Total</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value">{deployments.filter(d => d.status === 'running').length}</span>
-            <span class="stat-label">En cours</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value">{datacenters.length}</span>
-            <span class="stat-label">Datacenters</span>
-          </div>
-        </div>
+      <!-- Stats -->
+      <section class="stats-section" aria-label="Statistiques">
+        <article class="stat-card">
+          <data class="stat-value" value={deployments.length}>{deployments.length}</data>
+          <span class="stat-label">Total</span>
+        </article>
+        <article class="stat-card">
+          <data class="stat-value" value={deployments.filter(d => d.status === 'running').length}>
+            {deployments.filter(d => d.status === 'running').length}
+          </data>
+          <span class="stat-label">En cours</span>
+        </article>
+        <article class="stat-card">
+          <data class="stat-value" value={datacenters.length}>{datacenters.length}</data>
+          <span class="stat-label">Datacenters</span>
+        </article>
+      </section>
 
-        <!-- Layout 2 colonnes -->
-        <div class="content-grid">
-          <!-- Colonne gauche: Déploiements -->
-          <div class="deployments-section">
-            {#if filteredDeployments.length === 0}
-              <div class="empty-deployments">
-                <p>Aucun déploiement trouvé</p>
-              </div>
-            {:else}
-              <div class="deployments-grid">
-                {#each filteredDeployments as deployment (deployment.id)}
+      <!-- Layout 2 colonnes -->
+      <div class="content-grid">
+        <!-- Colonne gauche: Déploiements -->
+        <section class="deployments-section" aria-label="Liste des déploiements">
+          {#if filteredDeployments.length === 0}
+            <p class="empty-deployments">Aucun déploiement trouvé</p>
+          {:else}
+            <ul class="deployments-grid">
+              {#each filteredDeployments as deployment (deployment.id)}
+                <li>
                   <DeploymentCard {deployment} />
-                {/each}
-              </div>
-            {/if}
-          </div>
+                </li>
+              {/each}
+            </ul>
+          {/if}
+        </section>
 
-          <!-- Colonne droite: Carte -->
-          <div class="map-section">
-            <DatacenterMap deployments={filteredDeployments} />
-          </div>
-        </div>
+        <!-- Colonne droite: Carte -->
+        <aside class="map-section" aria-label="Carte des datacenters">
+          <DatacenterMap deployments={filteredDeployments} />
+        </aside>
+      </div>
     </div>
   </main>
 </div>
@@ -288,11 +294,27 @@
     background: var(--color-primary-dark);
   }
 
+  /* Utilitaires */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   /* Filtres */
+  .filters-section {
+    margin-bottom: 1.5rem;
+  }
+
   .filters-bar {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.5rem;
     flex-wrap: wrap;
   }
 
@@ -320,10 +342,15 @@
     font-family: 'Poppins', sans-serif;
     font-size: 0.875rem;
     color: var(--text-primary);
+    background: transparent;
   }
 
   .search-box input::placeholder {
     color: var(--text-tertiary);
+  }
+
+  .search-box input:focus {
+    outline: none;
   }
 
   .filter-select {
@@ -342,14 +369,15 @@
     border-color: var(--color-primary);
   }
 
-  .filter-select:focus {
-    outline: none;
+  .filter-select:focus,
+  .filter-select:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(5, 12, 156, 0.1);
   }
 
   /* Stats */
-  .stats-row {
+  .stats-section {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
@@ -389,6 +417,9 @@
   }
 
   .deployments-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1rem;
@@ -437,7 +468,7 @@
       grid-template-columns: 1fr;
     }
 
-    .stats-row {
+    .stats-section {
       grid-template-columns: 1fr;
     }
   }

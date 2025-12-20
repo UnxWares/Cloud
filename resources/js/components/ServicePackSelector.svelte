@@ -70,8 +70,11 @@
                   class="expand-button"
                   class:expanded={expandedPacks.has(pack.id)}
                   onclick={(e) => togglePackExpand(pack.id, e)}
+                  aria-label={expandedPacks.has(pack.id) ? `Réduire ${pack.name}` : `Développer ${pack.name}`}
+                  aria-expanded={expandedPacks.has(pack.id)}
+                  type="button"
                 >
-                  <ChevronRight size={16} />
+                  <ChevronRight size={16} aria-hidden="true" />
                 </button>
               {/if}
               {#if pack.count !== undefined}

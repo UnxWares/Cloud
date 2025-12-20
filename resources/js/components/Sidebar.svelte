@@ -1,12 +1,12 @@
 <script>
   import { LayoutDashboard, Settings, ChevronDown, Package, Moon, Sun, PanelLeftClose, PanelLeft } from 'lucide-svelte'
   import * as LucideIcons from 'lucide-svelte'
-  import { onMount } from 'svelte'
-  import { api } from '../lib/api.js'
+  import { page } from '@inertiajs/svelte'
   import { theme, toggleTheme } from '../lib/theme.js'
   import { sidebarCollapsed } from '../lib/sidebar.js'
 
-  let servicePacks = $state([])
+  // Récupérer les servicePacks depuis les props Inertia partagées
+  let servicePacks = $derived($page.props.servicePacks || [])
   let openPacks = $state({})
   let currentPath = $state(window.location.pathname)
 
@@ -23,44 +23,14 @@
     return LucideIcons[pascalCase] || Package
   }
 
-  async function loadServicePacks() {
-    try {
-      const data = await api.getServicePacks().catch(() => [])
-      servicePacks = data || []
-
-      // Données de démo si vide
-      if (servicePacks.length === 0) {
-        servicePacks = [
-          { id: 'storage', slug: 'storage', name: 'Storage', icon: 'HardDrive', services: [] },
-          { id: 'compute', slug: 'compute', name: 'Compute', icon: 'Server', services: [] },
-          { id: 'network', slug: 'network', name: 'Network', icon: 'Globe', services: [] }
-        ]
-      }
-
-      // Charger les services de chaque pack
-      for (const pack of servicePacks) {
-        try {
-          const packSlug = pack.slug || pack.id
-          if (packSlug) {
-            const services = await api.getPackServices(packSlug).catch(() => [])
-            pack.services = services || []
-          } else {
-            pack.services = []
-          }
-        } catch (err) {
-          console.error(`Erreur chargement services pour ${pack.name}:`, err)
-          pack.services = []
-        }
-      }
-
-      // Ouvrir tous les packs par défaut
+  // Ouvrir tous les packs par défaut quand les servicePacks changent
+  $effect(() => {
+    if (servicePacks.length > 0 && Object.keys(openPacks).length === 0) {
       servicePacks.forEach(pack => {
         openPacks[pack.id || pack.slug] = true
       })
-    } catch (err) {
-      console.error('Erreur chargement service packs:', err)
     }
-  }
+  })
 
   function togglePack(packId) {
     if ($sidebarCollapsed) return // Ne pas ouvrir les packs en mode collapsed
@@ -79,117 +49,135 @@
       })
     }
   }
-
-  onMount(() => {
-    loadServicePacks()
-  })
 </script>
 
-<aside class="sidebar" class:collapsed={$sidebarCollapsed} role="complementary" aria-label="Navigation principale">
-  <div class="logo">
+<aside class="sidebar" class:collapsed={$sidebarCollapsed}>
+  <header class="logo">
     <a href="/" aria-label="Retour à l'accueil">
       <img src="/resources/img/unxwares-icon.svg" alt="Logo UnxWares" class="logo-icon" />
       {#if !$sidebarCollapsed}
         <span class="logo-text">Dashboard</span>
       {/if}
     </a>
-  </div>
+  </header>
 
-  <nav class="nav" aria-label="Menu principal">
-    <!-- Dashboard -->
-    <a
-      href="/dashboard"
-      class="nav-item"
-      class:active={currentPath === '/dashboard'}
-      aria-current={currentPath === '/dashboard' ? 'page' : undefined}
-    >
-      <LayoutDashboard size={20} aria-hidden="true" />
-      <span class="label">Dashboard</span>
-    </a>
+  <nav class="nav" aria-label="Navigation principale">
+    <ul class="nav-list">
+      <!-- Dashboard -->
+      <li>
+        <a
+          href="/dashboard"
+          class="nav-item"
+          class:active={currentPath === '/dashboard'}
+          aria-current={currentPath === '/dashboard' ? 'page' : undefined}
+        >
+          <LayoutDashboard size={20} aria-hidden="true" />
+          <span class="label">Dashboard</span>
+        </a>
+      </li>
+    </ul>
 
-    <!-- Service Packs (dropdown) -->
-    <div class="nav-section">
-      {#if !$sidebarCollapsed}
-        <div class="section-title" role="heading" aria-level="2">Services</div>
-      {/if}
-      {#each servicePacks as pack}
-        <div class="pack-group">
+    <!-- Service Packs -->
+    {#if !$sidebarCollapsed}
+      <h2 class="section-title" id="services-heading">Services</h2>
+    {/if}
+
+    <ul class="nav-list" aria-labelledby={!$sidebarCollapsed ? 'services-heading' : undefined}>
+      {#each servicePacks as pack (pack.id)}
+        <li class="pack-group">
           <button
             class="nav-item pack-toggle"
             onclick={() => togglePack(pack.id)}
-            aria-expanded={!$sidebarCollapsed && openPacks[pack.id]}
-            aria-label="Afficher/masquer les services {pack.name}"
-            title={$sidebarCollapsed ? pack.name : ''}
+            aria-expanded={!$sidebarCollapsed ? openPacks[pack.id] : undefined}
+            aria-controls={`pack-services-${pack.id}`}
+            aria-label={$sidebarCollapsed ? pack.name : undefined}
+            title={$sidebarCollapsed ? `Ouvrir ${pack.name}` : undefined}
+            type="button"
           >
             <svelte:component this={getIcon(pack.icon)} size={20} aria-hidden="true" />
             {#if !$sidebarCollapsed}
               <span class="label">{pack.name}</span>
-              <div class="chevron" class:open={openPacks[pack.id]} aria-hidden="true">
+              <span class="chevron" class:open={openPacks[pack.id]} aria-hidden="true">
                 <ChevronDown size={16} />
-              </div>
+              </span>
             {/if}
           </button>
 
           {#if !$sidebarCollapsed && openPacks[pack.id]}
-            <div class="pack-services">
+            <ul class="pack-services" id={`pack-services-${pack.id}`} role="group" aria-label="Services {pack.name}">
               {#if pack.services && pack.services.length > 0}
-                {#each pack.services as service}
-                  <a
-                    href="/dashboard/{pack.slug || pack.id}/{service.slug || service.id}"
-                    class="service-item"
-                  >
-                    {service.name || service.slug}
-                  </a>
+                {#each pack.services as service (service.id || service.slug)}
+                  <li>
+                    <a
+                      href="/dashboard/{pack.slug || pack.id}/{service.slug || service.id}"
+                      class="service-item"
+                    >
+                      {service.name || service.slug}
+                    </a>
+                  </li>
                 {/each}
               {:else}
-                <div class="service-item empty">
-                  Aucun service disponible
-                </div>
+                <li>
+                  <span class="service-item empty" role="status">
+                    Aucun service disponible
+                  </span>
+                </li>
               {/if}
-            </div>
+            </ul>
           {/if}
-        </div>
+        </li>
       {/each}
-    </div>
+    </ul>
 
-    <!-- Paramètres (en bas) -->
-    <div class="nav-bottom">
-      <button
-        class="nav-item"
-        onclick={toggleTheme}
-        aria-label={$theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
-      >
-        {#if $theme === 'dark'}
-          <Sun size={20} aria-hidden="true" />
-          <span class="label">Mode clair</span>
-        {:else}
-          <Moon size={20} aria-hidden="true" />
-          <span class="label">Mode sombre</span>
-        {/if}
-      </button>
-      <a
-        href="/dashboard/settings"
-        class="nav-item"
-        class:active={currentPath === '/dashboard/settings'}
-        aria-current={currentPath === '/dashboard/settings' ? 'page' : undefined}
-      >
-        <Settings size={20} aria-hidden="true" />
-        <span class="label">Paramètres</span>
-      </a>
-      <button
-        class="nav-item"
-        onclick={toggleCollapse}
-        aria-label={$sidebarCollapsed ? 'Déplier la barre latérale' : 'Replier la barre latérale'}
-      >
-        {#if $sidebarCollapsed}
-          <PanelLeft size={20} aria-hidden="true" />
-          <span class="label">Déplier</span>
-        {:else}
-          <PanelLeftClose size={20} aria-hidden="true" />
-          <span class="label">Replier</span>
-        {/if}
-      </button>
-    </div>
+    <!-- Actions -->
+    <ul class="nav-bottom" aria-label="Actions et paramètres">
+      <li>
+        <button
+          class="nav-item"
+          onclick={toggleTheme}
+          aria-label={$theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
+          aria-pressed={$theme === 'dark'}
+          type="button"
+        >
+          {#if $theme === 'dark'}
+            <Sun size={20} aria-hidden="true" />
+            <span class="label">Mode clair</span>
+          {:else}
+            <Moon size={20} aria-hidden="true" />
+            <span class="label">Mode sombre</span>
+          {/if}
+        </button>
+      </li>
+      <li>
+        <a
+          href="/dashboard/settings"
+          class="nav-item"
+          class:active={currentPath === '/dashboard/settings'}
+          aria-current={currentPath === '/dashboard/settings' ? 'page' : undefined}
+        >
+          <Settings size={20} aria-hidden="true" />
+          <span class="label">Paramètres</span>
+        </a>
+      </li>
+      <li>
+        <button
+          class="nav-item"
+          onclick={toggleCollapse}
+          aria-label={$sidebarCollapsed ? 'Déplier la barre latérale' : 'Replier la barre latérale'}
+          aria-expanded={!$sidebarCollapsed}
+          aria-controls="main-content"
+          type="button"
+        >
+          {#if $sidebarCollapsed}
+            <PanelLeft size={20} aria-hidden="true" />
+            <span class="label">Déplier</span>
+          {:else}
+            <PanelLeftClose size={20} aria-hidden="true" />
+            <span class="label">Replier</span>
+          {/if}
+        </button>
+      </li>
+    </ul>
   </nav>
 </aside>
 
@@ -260,12 +248,15 @@
     overflow-y: auto;
   }
 
-  .nav-section {
-    margin-top: 1rem;
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   .section-title {
     padding: 0.5rem 1.5rem;
+    margin: 1rem 0 0.5rem;
     font-size: 0.6875rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -297,6 +288,12 @@
   .nav-item:hover {
     background: var(--bg-secondary);
     color: var(--text-primary);
+  }
+
+  .nav-item:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+    background: var(--bg-secondary);
   }
 
   .nav-item.active {
@@ -341,8 +338,10 @@
   }
 
   .pack-services {
-    background: var(--bg-secondary);
+    list-style: none;
+    margin: 0;
     padding: 0.25rem 0;
+    background: var(--bg-secondary);
   }
 
   .service-item {
@@ -371,8 +370,9 @@
   }
 
   .nav-bottom {
-    margin-top: auto;
-    padding-top: 1rem;
+    list-style: none;
+    margin: auto 0 0;
+    padding: 1rem 0 0;
     border-top: 1px solid var(--border-color);
   }
 

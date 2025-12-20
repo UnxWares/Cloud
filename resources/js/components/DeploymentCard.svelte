@@ -13,56 +13,65 @@
   const status = statusColors[deployment.status] || statusColors.pending
 </script>
 
-<div class="deployment-card">
-  <div class="card-header">
-    <div class="deployment-icon">
+<article class="deployment-card">
+  <header class="card-header">
+    <div class="deployment-icon" aria-hidden="true">
       <Server size={20} />
     </div>
     <div class="deployment-info">
       <h3>{deployment.name}</h3>
-      <div class="meta">
+      <p class="meta">
         {#if deployment.service_name}
           <span class="service-badge">{deployment.service_name}</span>
         {/if}
         {#if deployment.datacenter}
           <span class="location">
-            <MapPin size={12} />
+            <MapPin size={12} aria-hidden="true" />
             {deployment.datacenter}
           </span>
         {/if}
-      </div>
+      </p>
     </div>
-    <button class="menu-button">
-      <MoreVertical size={18} />
+    <button class="menu-button" aria-label="Options pour {deployment.name}">
+      <MoreVertical size={18} aria-hidden="true" />
     </button>
-  </div>
+  </header>
 
-  <div class="card-body">
+  <section class="card-body">
     <div class="status-row">
       <span class="status-badge" style="background: {status.bg}; color: {status.text}">
-        <Activity size={12} />
+        <Activity size={12} aria-hidden="true" />
         {status.label}
       </span>
       {#if deployment.ip}
-        <span class="ip-address">{deployment.ip}</span>
+        <data class="ip-address" value={deployment.ip}>{deployment.ip}</data>
       {/if}
     </div>
 
     {#if deployment.specs}
-      <div class="specs">
+      <dl class="specs">
         {#if deployment.specs.cpu}
-          <span class="spec-item">{deployment.specs.cpu} vCPU</span>
+          <div class="spec-item">
+            <dt class="visually-hidden">CPU</dt>
+            <dd>{deployment.specs.cpu} vCPU</dd>
+          </div>
         {/if}
         {#if deployment.specs.ram}
-          <span class="spec-item">{deployment.specs.ram} GB RAM</span>
+          <div class="spec-item">
+            <dt class="visually-hidden">RAM</dt>
+            <dd>{deployment.specs.ram} GB RAM</dd>
+          </div>
         {/if}
         {#if deployment.specs.storage}
-          <span class="spec-item">{deployment.specs.storage} GB</span>
+          <div class="spec-item">
+            <dt class="visually-hidden">Stockage</dt>
+            <dd>{deployment.specs.storage} GB</dd>
+          </div>
         {/if}
-      </div>
+      </dl>
     {/if}
-  </div>
-</div>
+  </section>
+</article>
 
 <style>
   .deployment-card {
@@ -76,6 +85,11 @@
   .deployment-card:hover {
     border-color: var(--color-primary);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .deployment-card:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(5, 12, 156, 0.1);
   }
 
   .card-header {
@@ -113,7 +127,20 @@
     white-space: nowrap;
   }
 
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .meta {
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -153,6 +180,13 @@
     color: var(--text-primary);
   }
 
+  .menu-button:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
   .card-body {
     padding: 1rem;
     display: flex;
@@ -183,12 +217,19 @@
   }
 
   .specs {
+    margin: 0;
+    padding: 0;
     display: flex;
     gap: 0.75rem;
     flex-wrap: wrap;
   }
 
   .spec-item {
+    display: contents;
+  }
+
+  .spec-item dd {
+    margin: 0;
     font-size: 0.8125rem;
     color: var(--text-secondary);
   }

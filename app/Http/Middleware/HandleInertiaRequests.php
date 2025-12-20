@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\OrchestratorService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -15,6 +16,10 @@ class HandleInertiaRequests extends Middleware
      * @var string
      */
     protected $rootView = 'app';
+
+    public function __construct(
+        private OrchestratorService $orchestrator
+    ) {}
 
     /**
      * Determines the current asset version.
@@ -35,9 +40,46 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Charger les service packs avec leurs services
+        $servicePacks = $this->loadServicePacks();
+
         return [
             ...parent::share($request),
-            //
+            'servicePacks' => $servicePacks,
         ];
+    }
+
+    /**
+     * Charge les service packs depuis l'orchestrateur
+     */
+    private function loadServicePacks(): array
+    {
+        try {
+            $servicePacks = $this->orchestrator->getServicePacks();
+
+            // Pour chaque pack, charger ses services
+            foreach ($servicePacks as &$pack) {
+                try {
+                    $packSlug = $pack['slug'] ?? null;
+                    if ($packSlug) {
+                        $services = $this->orchestrator->getPackServices($packSlug);
+                        $pack['services'] = $services;
+                    } else {
+                        $pack['services'] = [];
+                    }
+                } catch (\Exception $e) {
+                    $pack['services'] = [];
+                }
+            }
+
+            return $servicePacks;
+        } catch (\Exception $e) {
+            // Données de démo si l'API échoue
+            return [
+                ['id' => 'storage', 'slug' => 'storage', 'name' => 'Storage', 'icon' => 'HardDrive', 'description' => 'Services de stockage', 'services' => []],
+                ['id' => 'compute', 'slug' => 'compute', 'name' => 'Compute', 'icon' => 'Server', 'description' => 'Serveurs et VM', 'services' => []],
+                ['id' => 'network', 'slug' => 'network', 'name' => 'Network', 'icon' => 'Globe', 'description' => 'Services réseau', 'services' => []]
+            ];
+        }
     }
 }

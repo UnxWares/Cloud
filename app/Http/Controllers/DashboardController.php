@@ -14,34 +14,7 @@ class DashboardController extends Controller
 
     public function index(): Response
     {
-        // Charger les service packs depuis l'orchestrateur
-        try {
-            $servicePacks = $this->orchestrator->getServicePacks();
-
-            // Pour chaque pack, charger ses services
-            foreach ($servicePacks as &$pack) {
-                try {
-                    // Utiliser le slug du pack pour récupérer ses services
-                    $packSlug = $pack['slug'] ?? null;
-                    if ($packSlug) {
-                        $services = $this->orchestrator->getPackServices($packSlug);
-                        $pack['services'] = $services;
-                    } else {
-                        $pack['services'] = [];
-                    }
-                } catch (\Exception $e) {
-                    // Si erreur lors du chargement des services, tableau vide
-                    $pack['services'] = [];
-                }
-            }
-        } catch (\Exception $e) {
-            // Données de démo si l'API échoue
-            $servicePacks = [
-                ['id' => 'storage', 'slug' => 'storage', 'name' => 'Storage', 'icon' => 'HardDrive', 'description' => 'Services de stockage', 'services' => []],
-                ['id' => 'compute', 'slug' => 'compute', 'name' => 'Compute', 'icon' => 'Server', 'description' => 'Serveurs et VM', 'services' => []],
-                ['id' => 'network', 'slug' => 'network', 'name' => 'Network', 'icon' => 'Globe', 'description' => 'Services réseau', 'services' => []]
-            ];
-        }
+        // Les servicePacks sont maintenant chargés dans le middleware HandleInertiaRequests
 
         // Tenter de charger les déploiements du customer (nécessite JWT)
         try {
@@ -196,7 +169,6 @@ class DashboardController extends Controller
         }
 
         return Inertia::render('Dashboard', [
-            'servicePacks' => $servicePacks,
             'deployments' => $deployments,
         ]);
     }

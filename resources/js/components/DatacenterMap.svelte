@@ -700,15 +700,15 @@
           style:top={position.top}
           style:left={position.left}
         >
-          <div
+          <button
             class="marker-dot"
             onclick={() => toggleDatacenter(dc)}
-            onkeydown={(e) => e.key === 'Enter' && toggleDatacenter(dc)}
-            role="button"
-            tabindex="0"
+            aria-label="{dc} - {data.count} déploiement{data.count > 1 ? 's' : ''}"
+            aria-expanded={selectedDatacenter === dc}
+            type="button"
           >
-            <MapPin size={10} />
-          </div>
+            <MapPin size={10} aria-hidden="true" />
+          </button>
           {#if selectedDatacenter === dc}
             <div class="marker-label">
               <strong>{dc}</strong>

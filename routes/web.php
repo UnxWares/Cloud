@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ServicePackController;
-use App\Http\Controllers\Api\ServiceController;
-use App\Http\Controllers\Api\DeploymentController;
 use App\Http\Controllers\DashboardController;
 use Inertia\Inertia;
 
@@ -44,7 +41,7 @@ Route::get('/dev/auth-test', function () {
     }
 });
 
-// API Routes - Proxy vers l'orchestrateur
+// API Routes - Authentication uniquement
 Route::prefix('api')->group(function () {
     // Authentication
     Route::prefix('auth')->group(function () {
@@ -53,16 +50,4 @@ Route::prefix('api')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/status', [AuthController::class, 'status']);
     });
-
-    // Service Packs (/v1/products dans l'orchestrateur)
-    Route::get('/service-packs', [ServicePackController::class, 'index']);
-    Route::get('/service-packs/{id}', [ServicePackController::class, 'show']);
-
-    // Services (dans les service packs)
-    Route::get('/services', [ServiceController::class, 'index']);
-    Route::get('/services/{id}', [ServiceController::class, 'show']);
-
-    // Deployments (instances déployées)
-    Route::get('/deployments', [DeploymentController::class, 'index']);
-    Route::get('/deployments/{id}', [DeploymentController::class, 'show']);
 });
