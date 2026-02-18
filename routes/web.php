@@ -5,6 +5,11 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\DashboardController;
 use Inertia\Inertia;
 
+// Health check route for monitoring
+Route::get('/health', function () {
+    return response()->json(['status' => 'OK'], 200);
+});
+
 // Page d'accueil - www.unxwares.cloud (en dev: localhost:8000)
 Route::get('/', function () {
     return Inertia::render('Home');
