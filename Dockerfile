@@ -67,8 +67,12 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 # Create storage links
 RUN php artisan storage:link
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Expose the default port
 EXPOSE 8000
 
 # Entrypoint
-CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
