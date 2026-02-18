@@ -15,8 +15,6 @@ storage/logs/*
 .phpunit.result.cache
 tests/
 phpunit.xml
-pnpm-lock.yaml
-composer.lock
 Dockerfile
 .dockerignore
 .github/
