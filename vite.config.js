@@ -4,6 +4,7 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import autoprefixer from 'autoprefixer';
 
 export default defineConfig({
+    base: './',
     plugins: [
         laravel({
             input: [
@@ -11,21 +12,21 @@ export default defineConfig({
                 'resources/js/app.js'
             ],
             refresh: true,
-	    postcss: [
-            	autoprefixer()
+            postcss: [
+                autoprefixer()
             ],
         }),
-	svelte({
-		compilerOptions: {
-			compatibility: {
-				componentApi: 4
-			}
-		}
-	}),
+        svelte({
+            compilerOptions: {
+                compatibility: {
+                    componentApi: 4
+                }
+            }
+        }),
     ],
     css: {
-        	preprocessorOptions: {
-        	scss: {},
-    	},
+        preprocessorOptions: {
+            scss: {},
+        },
     },
 });
