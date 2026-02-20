@@ -29,7 +29,7 @@
         gap: 0.25rem;
         transition: all 0.3s ease;
         height: var(--header-height);
-        padding: 0 1rem 0 1.5rem;
+        padding: 18px 1rem 18px 1.5rem;
         box-sizing: border-box;
         flex-shrink: 0;
     }

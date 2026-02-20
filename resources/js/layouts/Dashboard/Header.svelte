@@ -38,7 +38,7 @@
         border-bottom: 1px solid var(--border-color);
         height: var(--header-height);
         box-sizing: border-box;
-        padding: 0 1.75rem;
+        padding: 18px 1.75rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
