@@ -1,16 +1,12 @@
 <script>
   import { Search } from 'lucide-svelte'
-  import Sidebar from '../components/Sidebar.svelte'
+  import DashboardLayout from '../layouts/DashboardLayout.svelte'
   import DeploymentCard from '../components/DeploymentCard.svelte'
   import DatacenterMap from '../components/DatacenterMap.svelte'
   import ServicePackSelector from '../components/ServicePackSelector.svelte'
-  import { sidebarCollapsed, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from '../lib/sidebar.js'
 
   // Props depuis Inertia (passées depuis Laravel)
   let { servicePacks = [], deployments = [] } = $props()
-
-  // Largeur de la sidebar selon l'état
-  let sidebarWidth = $derived($sidebarCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED)
 
   // Filtres locaux
   let selectedPack = $state(null)
@@ -88,16 +84,8 @@
   })
 </script>
 
-<div class="dashboard-layout">
-  <Sidebar />
-
-  <main id="main-content" class="main-content" style="--sidebar-width: {sidebarWidth}px">
-    <header class="page-header">
-      <h1>Déploiements</h1>
-      <p class="subtitle">Gérez tous vos services déployés</p>
-    </header>
-
-    <div class="content-wrapper">
+<DashboardLayout title="Déploiements" subtitle="Gérez tous vos services déployés">
+  <div class="content-wrapper">
       <!-- Filtres -->
       <section class="filters-section" aria-label="Filtres de recherche">
         <form class="filters-bar" onsubmit={(e) => e.preventDefault()}>
@@ -185,43 +173,10 @@
           <DatacenterMap deployments={filteredDeployments} />
         </aside>
       </div>
-    </div>
-  </main>
-</div>
+  </div>
+</DashboardLayout>
 
 <style>
-  .dashboard-layout {
-    display: flex;
-    min-height: 100vh;
-    background: var(--bg-secondary);
-  }
-
-  .main-content {
-    flex: 1;
-    margin-left: var(--sidebar-width, 240px);
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-  }
-
-  .page-header {
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
-    padding: 2rem 2.5rem;
-  }
-
-  .header-content h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  .subtitle {
-    margin: 0;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-  }
-
   .content-wrapper {
     padding: 2rem 2.5rem;
   }
@@ -448,18 +403,6 @@
   }
 
   @media (max-width: 768px) {
-    .main-content {
-      margin-left: 60px;
-    }
-
-    .page-header {
-      padding: 1.5rem;
-    }
-
-    .header-content h1 {
-      font-size: 1.5rem;
-    }
-
     .content-wrapper {
       padding: 1.5rem;
     }

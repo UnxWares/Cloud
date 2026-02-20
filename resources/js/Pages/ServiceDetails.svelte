@@ -1,17 +1,13 @@
 <script>
   import { Server, ArrowLeft, Plus } from 'lucide-svelte'
-  import Sidebar from '../components/Sidebar.svelte'
+  import DashboardLayout from '../layouts/DashboardLayout.svelte'
   import DeploymentCard from '../components/DeploymentCard.svelte'
-  import { sidebarCollapsed, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from '../lib/sidebar.js'
 
   // Props depuis Inertia
   let { packSlug, serviceSlug, offers = [], deployments = [] } = $props()
 
   // Formater le nom du service
   let serviceName = $derived(serviceSlug.charAt(0).toUpperCase() + serviceSlug.slice(1))
-
-  // Largeur de la sidebar selon l'état
-  let sidebarWidth = $derived($sidebarCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED)
 
   function createNewDeployment() {
     // Redirection vers unxwares.cloud pour créer un nouveau déploiement
@@ -21,76 +17,45 @@
   }
 </script>
 
-<div class="dashboard-layout">
-  <Sidebar />
-
-  <main class="main-content" style="--sidebar-width: {sidebarWidth}px">
-    <header class="page-header">
-      <div class="header-content">
-        <a href="/dashboard" class="back-link">
-          <ArrowLeft size={20} />
-          <span>Retour au dashboard</span>
-        </a>
-        <h1>{serviceName}</h1>
-        <p class="subtitle">Gérez vos instances {serviceName}</p>
+<DashboardLayout title={serviceName} subtitle="Gérez vos instances {serviceName}">
+  <div class="content-wrapper">
+    <a href="/dashboard" class="back-link">
+      <ArrowLeft size={20} />
+      <span>Retour au dashboard</span>
+    </a>
+    <section class="section">
+      <div class="section-header">
+        <div class="header-left">
+          <h2>Mes déploiements {serviceName}</h2>
+          <p class="section-desc">Gérez vos instances actives</p>
+        </div>
+        <button class="new-deployment-button" onclick={createNewDeployment}>
+          <Plus size={20} />
+          <span>Nouveau déploiement</span>
+        </button>
       </div>
-    </header>
 
-    <div class="content-wrapper">
-      <!-- Déploiements -->
-      <section class="section">
-        <div class="section-header">
-          <div class="header-left">
-            <h2>Mes déploiements {serviceName}</h2>
-            <p class="section-desc">Gérez vos instances actives</p>
-          </div>
-          <button class="new-deployment-button" onclick={createNewDeployment}>
+      {#if deployments.length === 0}
+        <div class="empty-state">
+          <Server size={48} />
+          <p>Aucun déploiement actif</p>
+          <button class="create-first-button" onclick={createNewDeployment}>
             <Plus size={20} />
-            <span>Nouveau déploiement</span>
+            <span>Créer votre premier déploiement</span>
           </button>
         </div>
-
-        {#if deployments.length === 0}
-          <div class="empty-state">
-            <Server size={48} />
-            <p>Aucun déploiement actif</p>
-            <button class="create-first-button" onclick={createNewDeployment}>
-              <Plus size={20} />
-              <span>Créer votre premier déploiement</span>
-            </button>
-          </div>
-        {:else}
-          <div class="deployments-grid">
-            {#each deployments as deployment (deployment.id)}
-              <DeploymentCard {deployment} />
-            {/each}
-          </div>
-        {/if}
-      </section>
-    </div>
-  </main>
-</div>
+      {:else}
+        <div class="deployments-grid">
+          {#each deployments as deployment (deployment.id)}
+            <DeploymentCard {deployment} />
+          {/each}
+        </div>
+      {/if}
+    </section>
+  </div>
+</DashboardLayout>
 
 <style>
-  .dashboard-layout {
-    display: flex;
-    min-height: 100vh;
-    background: var(--bg-secondary);
-  }
-
-  .main-content {
-    flex: 1;
-    margin-left: var(--sidebar-width, 240px);
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-  }
-
-  .page-header {
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
-    padding: 2rem 2.5rem;
-  }
-
   .back-link {
     display: inline-flex;
     align-items: center;
@@ -98,25 +63,12 @@
     color: var(--text-secondary);
     text-decoration: none;
     font-size: 0.875rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     transition: color 0.2s;
   }
 
   .back-link:hover {
     color: var(--color-primary);
-  }
-
-  .header-content h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  .subtitle {
-    margin: 0;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
   }
 
   .content-wrapper {
@@ -226,18 +178,6 @@
   }
 
   @media (max-width: 768px) {
-    .main-content {
-      margin-left: 60px;
-    }
-
-    .page-header {
-      padding: 1.5rem;
-    }
-
-    .header-content h1 {
-      font-size: 1.5rem;
-    }
-
     .content-wrapper {
       padding: 1.5rem;
     }
