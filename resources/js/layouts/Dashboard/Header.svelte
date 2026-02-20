@@ -36,9 +36,8 @@
         grid-area: header;
         background-color: var(--bg-secondary);
         border-bottom: 1px solid var(--border-color);
-        height: var(--header-height);
         box-sizing: border-box;
-        padding: 18px 1.75rem;
+        padding: var(--space-26) var(--space-28);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -53,7 +52,7 @@
     }
 
     .page-title .subtitle {
-        margin: 0.125rem 0 0;
+        margin: 1px 0 0;
         font-size: 0.8125rem;
         color: var(--text-secondary);
     }

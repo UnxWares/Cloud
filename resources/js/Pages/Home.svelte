@@ -1,147 +1,244 @@
 <script>
-  let features = [
-    {
-      title: 'Performance',
-      description: 'Des solutions optimisées pour une vitesse maximale',
-      icon: '⚡'
-    },
-    {
-      title: 'Sécurité',
-      description: 'Protection avancée de vos données',
-      icon: '🔒'
-    },
-    {
-      title: 'Support',
-      description: 'Une équipe dédiée à votre service',
-      icon: '💬'
-    }
-  ]
+  import { Zap, Shield, HeadphonesIcon, ArrowRight, Cloud, Server, Database } from 'lucide-svelte'
 </script>
 
 <div class="home">
-  <header class="hero">
-    <div class="hero-content">
-      <h1>UnxWares</h1>
-      <p class="tagline">Solutions cloud innovantes pour votre entreprise</p>
-      <div class="cta-buttons">
-        <a href="/dashboard" class="btn btn-primary">Accéder au Dashboard</a>
-        <a href="#features" class="btn btn-secondary">En savoir plus</a>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1>
+          <span class="brand">UnxWares</span>
+          <span class="brand-cloud">Cloud</span>
+        </h1>
+        <p class="tagline">
+          Infrastructure cloud performante et sécurisée pour votre entreprise
+        </p>
+        <div class="cta-buttons">
+          <a href="/dashboard" class="btn btn-primary">
+            <span>Accéder au Dashboard</span>
+            <ArrowRight size={20} />
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="floating-card">
+          <Cloud size={48} />
+        </div>
+        <div class="floating-card delay-1">
+          <Server size={48} />
+        </div>
+        <div class="floating-card delay-2">
+          <Database size={48} />
+        </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <section id="features" class="features">
-    <h2>Nos fonctionnalités</h2>
-    <div class="features-grid">
-      {#each features as feature}
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2>Pourquoi choisir UnxWares ?</h2>
+
+      <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">{feature.icon}</div>
-          <h3>{feature.title}</h3>
-          <p>{feature.description}</p>
+          <div class="feature-icon">
+            <Zap size={32} />
+          </div>
+          <h3>Performance optimale</h3>
+          <p>Infrastructure haute performance pour des temps de réponse ultra-rapides</p>
         </div>
-      {/each}
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <Shield size={32} />
+          </div>
+          <h3>Sécurité renforcée</h3>
+          <p>Protection avancée de vos données avec chiffrement de bout en bout</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <HeadphonesIcon size={32} />
+          </div>
+          <h3>Support 24/7</h3>
+          <p>Une équipe d'experts à votre disposition à tout moment</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="about">
-    <div class="about-content">
-      <h2>À propos d'UnxWares</h2>
-      <p>
-        UnxWares propose des solutions cloud innovantes conçues pour répondre
-        aux besoins des entreprises modernes. Notre plateforme offre performance,
-        sécurité et simplicité d'utilisation.
-      </p>
-    </div>
-  </section>
-
+  <!-- Footer -->
   <footer class="footer">
-    <p>&copy; 2024 UnxWares. Tous droits réservés.</p>
+    <div class="container">
+      <p>&copy; {new Date().getFullYear()} UnxWares. Tous droits réservés.</p>
+    </div>
   </footer>
 </div>
 
 <style>
   .home {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    background: var(--bg-primary);
   }
 
+  /* Hero Section */
   .hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 8rem 2rem;
-    text-align: center;
-    flex: 0 0 auto;
+    position: relative;
+    padding: 8rem 2rem 6rem;
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+    overflow: hidden;
   }
 
-  .hero-content {
-    max-width: 800px;
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      radial-gradient(circle at 20% 50%, rgba(5, 12, 156, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(5, 12, 156, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-container {
+    max-width: 1200px;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
   }
 
-  h1 {
-    font-size: 4rem;
-    margin: 0 0 1rem 0;
+  .hero-content h1 {
+    margin: 0 0 1.5rem;
+    font-size: 3.5rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text-primary);
+  }
+
+  .brand {
+    display: block;
+    color: var(--color-primary);
+  }
+
+  .brand-cloud {
+    display: block;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .tagline {
-    font-size: 1.5rem;
-    margin: 0 0 3rem 0;
-    opacity: 0.95;
-    font-weight: 300;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin: 0 0 2.5rem;
+    line-height: 1.6;
   }
 
   .cta-buttons {
     display: flex;
     gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
   }
 
   .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     padding: 1rem 2rem;
     border-radius: 8px;
-    text-decoration: none;
     font-weight: 600;
-    font-size: 1.1rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: inline-block;
-  }
-
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
   }
 
   .btn-primary {
-    background: var(--bg-primary);
-    color: #667eea;
-  }
-
-  .btn-secondary {
-    background: rgba(255,255,255,0.2);
+    background: var(--color-primary);
     color: white;
-    border: 2px solid white;
+    box-shadow: 0 4px 12px rgba(5, 12, 156, 0.3);
   }
 
+  .btn-primary:hover {
+    background: var(--color-primary-dark);
+    box-shadow: 0 6px 20px rgba(5, 12, 156, 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* Hero Visual */
+  .hero-visual {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .floating-card {
+    position: absolute;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    color: var(--color-primary);
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .floating-card:nth-child(1) {
+    top: 20%;
+    left: 10%;
+  }
+
+  .floating-card:nth-child(2) {
+    top: 50%;
+    right: 15%;
+    animation-delay: -2s;
+  }
+
+  .floating-card:nth-child(3) {
+    bottom: 15%;
+    left: 25%;
+    animation-delay: -4s;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  /* Features Section */
   .features {
     padding: 6rem 2rem;
     background: var(--bg-primary);
-    flex: 1 0 auto;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
   .features h2 {
     text-align: center;
     font-size: 2.5rem;
-    color: #333;
-    margin: 0 0 4rem 0;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4rem;
   }
 
   .features-grid {
-    max-width: 1200px;
-    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
@@ -149,110 +246,98 @@
 
   .feature-card {
     background: var(--bg-secondary);
-    padding: 2rem;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 2.5rem;
+    transition: all 0.3s ease;
   }
 
   .feature-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
   }
 
   .feature-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    display: inline-flex;
+    padding: 1rem;
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
   }
 
   .feature-card h3 {
-    color: #333;
-    font-size: 1.5rem;
-    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem;
   }
 
   .feature-card p {
-    color: #666;
+    color: var(--text-secondary);
     line-height: 1.6;
     margin: 0;
+    font-size: 0.9375rem;
   }
 
-  .about {
-    padding: 6rem 2rem;
-    background: var(--bg-secondary);
-    flex: 0 0 auto;
-  }
-
-  .about-content {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .about h2 {
-    font-size: 2.5rem;
-    color: #333;
-    margin: 0 0 2rem 0;
-  }
-
-  .about p {
-    font-size: 1.2rem;
-    color: #666;
-    line-height: 1.8;
-    margin: 0;
-  }
-
+  /* Footer */
   .footer {
-    background: #333;
-    color: white;
-    text-align: center;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
     padding: 2rem;
-    flex: 0 0 auto;
+    text-align: center;
   }
 
   .footer p {
     margin: 0;
-    opacity: 0.8;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
   }
 
-  @media (max-width: 768px) {
-    h1 {
+  /* Responsive */
+  @media (max-width: 968px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .hero-visual {
+      height: 300px;
+    }
+
+    .hero-content h1 {
       font-size: 2.5rem;
     }
 
     .tagline {
-      font-size: 1.2rem;
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 4rem 1rem 3rem;
     }
 
-    .hero {
+    .hero-content h1 {
+      font-size: 2rem;
+    }
+
+    .features {
       padding: 4rem 1rem;
     }
 
-    .features, .about {
-      padding: 3rem 1rem;
-    }
-
-    .features h2, .about h2 {
+    .features h2 {
       font-size: 2rem;
     }
 
     .features-grid {
       grid-template-columns: 1fr;
     }
-  }
 
-  :global(html) {
-    margin: 0;
-    padding: 0;
-  }
-
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  :global(*) {
-    box-sizing: border-box;
+    .hero-visual {
+      display: none;
+    }
   }
 </style>

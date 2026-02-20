@@ -25,26 +25,23 @@
     .sidebar-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 0.25rem;
+        justify-content: center;
+        gap: var(--space-4);
         transition: all 0.3s ease;
-        height: var(--header-height);
-        padding: 18px 1rem 18px 1.5rem;
-        box-sizing: border-box;
+        margin: var(--space-28) 0;
         flex-shrink: 0;
     }
 
     .sidebar-header.collapsed {
         flex-direction: column;
-        gap: 0.75rem;
-        justify-content: center;
-        padding: 0 0.5rem;
+        gap: var(--space-12);
     }
 
     .logo {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
+        gap: var(--space-4);
         text-decoration: none;
         color: var(--color-primary);
         font-weight: 700;
@@ -69,8 +66,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
+        padding: var(--space-8);
+        border-radius: var(--space-8);
         transition: all 0.2s ease;
         flex-shrink: 0;
     }

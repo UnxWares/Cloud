@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeploymentController;
 use Inertia\Inertia;
 
 // Page d'accueil - www.unxwares.cloud (en dev: localhost:8000)
@@ -11,10 +12,17 @@ Route::get('/', function () {
 });
 
 // Dashboard - dashboard.unxwares.cloud (en dev: localhost:8000/dashboard)
-Route::get('/dashboard', [DashboardController::class, 'index']);
+// Nécessite l'authentification via l'orchestrateur
+Route::middleware('orchestrator.auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/dashboard/{pack_slug}/{service_slug}', [DashboardController::class, 'showService'])->name('dashboard.service');
 
-// Page d'un service spécifique avec ses offres
-Route::get('/dashboard/{pack_slug}/{service_slug}', [DashboardController::class, 'showService']);
+    // Gestion des déploiements
+    Route::post('/dashboard/{pack_slug}/{service_slug}/deployments', [DeploymentController::class, 'store'])->name('deployments.store');
+    Route::patch('/dashboard/{pack_slug}/{service_slug}/deployments/{deployment_id}/suspend', [DeploymentController::class, 'suspend'])->name('deployments.suspend');
+    Route::patch('/dashboard/{pack_slug}/{service_slug}/deployments/{deployment_id}/resume', [DeploymentController::class, 'resume'])->name('deployments.resume');
+    Route::delete('/dashboard/{pack_slug}/{service_slug}/deployments/{deployment_id}', [DeploymentController::class, 'destroy'])->name('deployments.destroy');
+});
 
 // DEV ONLY - Route de test pour générer un token facilement depuis le navigateur
 // À SUPPRIMER en production !

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\TrustProxies;
+use App\Http\Middleware\EnsureOrchestratorAuthenticated;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,7 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/health',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'orchestrator.auth' => EnsureOrchestratorAuthenticated::class,
+        ]);
     })
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [

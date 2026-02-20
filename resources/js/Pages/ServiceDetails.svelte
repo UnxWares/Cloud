@@ -1,5 +1,6 @@
 <script>
   import { Server, ArrowLeft, Plus } from 'lucide-svelte'
+  import { router } from '@inertiajs/svelte'
   import DashboardLayout from '../layouts/DashboardLayout.svelte'
   import DeploymentCard from '../components/DeploymentCard.svelte'
 
@@ -9,11 +10,32 @@
   // Formater le nom du service
   let serviceName = $derived(serviceSlug.charAt(0).toUpperCase() + serviceSlug.slice(1))
 
-  function createNewDeployment() {
-    // Redirection vers unxwares.cloud pour créer un nouveau déploiement
-    // L'utilisateur pourra choisir son offre, enregistrer sa carte et payer
-    const returnUrl = encodeURIComponent(window.location.href)
-    window.location.href = `https://unxwares.cloud/products/${packSlug}/${serviceSlug}?return=${returnUrl}`
+  // État pour le modal de création
+  let showCreateModal = $state(false)
+  let selectedOffer = $state(null)
+  let deploymentName = $state('')
+
+  function openCreateModal() {
+    showCreateModal = true
+  }
+
+  function closeCreateModal() {
+    showCreateModal = false
+    selectedOffer = null
+    deploymentName = ''
+  }
+
+  function createDeployment() {
+    if (!deploymentName || !selectedOffer) return
+
+    router.post(`/dashboard/${packSlug}/${serviceSlug}/deployments`, {
+      name: deploymentName,
+      offer_id: selectedOffer,
+    }, {
+      onSuccess: () => {
+        closeCreateModal()
+      }
+    })
   }
 </script>
 
@@ -29,7 +51,7 @@
           <h2>Mes déploiements {serviceName}</h2>
           <p class="section-desc">Gérez vos instances actives</p>
         </div>
-        <button class="new-deployment-button" onclick={createNewDeployment}>
+        <button class="new-deployment-button" onclick={openCreateModal}>
           <Plus size={20} />
           <span>Nouveau déploiement</span>
         </button>
@@ -39,7 +61,7 @@
         <div class="empty-state">
           <Server size={48} />
           <p>Aucun déploiement actif</p>
-          <button class="create-first-button" onclick={createNewDeployment}>
+          <button class="create-first-button" onclick={openCreateModal}>
             <Plus size={20} />
             <span>Créer votre premier déploiement</span>
           </button>
@@ -54,6 +76,46 @@
     </section>
   </div>
 </DashboardLayout>
+
+<!-- Modal de création de déploiement -->
+{#if showCreateModal}
+  <div class="modal-overlay" onclick={closeCreateModal}>
+    <div class="modal-content" onclick={(e) => e.stopPropagation()}>
+      <h2>Créer un nouveau déploiement</h2>
+
+      <form onsubmit={(e) => { e.preventDefault(); createDeployment(); }}>
+        <div class="form-group">
+          <label for="deployment-name">Nom du déploiement</label>
+          <input
+            id="deployment-name"
+            type="text"
+            bind:value={deploymentName}
+            placeholder="Ex: Mon serveur web"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="offer-select">Offre</label>
+          <select id="offer-select" bind:value={selectedOffer} required>
+            <option value="">Sélectionner une offre</option>
+            {#each offers as offer}
+              <option value={offer.id}>{offer.name} - {offer.price}</option>
+            {/each}
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick={closeCreateModal}>Annuler</button>
+          <button type="submit" class="btn-create" disabled={!deploymentName || !selectedOffer}>
+            <Plus size={18} />
+            <span>Créer</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+{/if}
 
 <style>
   .back-link {
@@ -182,9 +244,116 @@
       padding: 1.5rem;
     }
 
-    .offers-grid,
     .deployments-grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .modal-content h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+  }
+
+  .btn-cancel,
+  .btn-create {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-cancel {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .btn-cancel:hover {
+    background: var(--border-color);
+  }
+
+  .btn-create {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .btn-create:hover:not(:disabled) {
+    background: var(--color-primary-dark);
+  }
+
+  .btn-create:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>

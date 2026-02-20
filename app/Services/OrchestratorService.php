@@ -251,4 +251,45 @@ class OrchestratorService
         $result = $this->request('get', "/v1/manage/{$packSlug}/{$serviceSlug}/{$deploymentId}", [], true);
         return $result ?? [];
     }
+
+    /**
+     * Crée un nouveau déploiement (version simplifiée actuelle)
+     * POST /v1/manage/deployments
+     * Nécessite JWT token
+     */
+    public function createDeployment(array $data): array
+    {
+        $result = $this->request('post', '/v1/manage/deployments', $data, true);
+        return $result ?? [];
+    }
+
+    /**
+     * Supprime un déploiement
+     * Nécessite JWT token
+     */
+    public function deleteDeployment(string $packSlug, string $serviceSlug, string $deploymentId): array
+    {
+        $result = $this->request('delete', "/v1/manage/{$packSlug}/{$serviceSlug}/{$deploymentId}", [], true);
+        return $result ?? [];
+    }
+
+    /**
+     * Suspend un déploiement
+     * Nécessite JWT token
+     */
+    public function suspendDeployment(string $packSlug, string $serviceSlug, string $deploymentId): array
+    {
+        $result = $this->request('patch', "/v1/manage/{$packSlug}/{$serviceSlug}/{$deploymentId}/suspend", [], true);
+        return $result ?? [];
+    }
+
+    /**
+     * Réactive un déploiement suspendu
+     * Nécessite JWT token
+     */
+    public function resumeDeployment(string $packSlug, string $serviceSlug, string $deploymentId): array
+    {
+        $result = $this->request('patch', "/v1/manage/{$packSlug}/{$serviceSlug}/{$deploymentId}/resume", [], true);
+        return $result ?? [];
+    }
 }
