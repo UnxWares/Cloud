@@ -3,7 +3,7 @@ pipeline {
     environment {
         HARBOR_REGISTRY = 'oci.external.infra.unxwares.com'
         HARBOR_PROJECT = 'websites'
-        APP_NAME = 'com-cloud'
+        APP_NAME = 'cloud-website'
         IMAGE_TAG = "v${env.BUILD_NUMBER}"
         FULL_IMAGE_NAME = "${HARBOR_REGISTRY}/${HARBOR_PROJECT}/${APP_NAME}:${IMAGE_TAG}"
         HARBOR_CREDS_ID = 'harbor-creds'
@@ -17,7 +17,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Construction de l'image Laravel Cloud..."
+                    echo "Construction de l.image Laravel Cloud Website..."
                     withCredentials([usernamePassword(credentialsId: 'unxwares-npm-token', passwordVariable: 'NPM_PASSWORD', usernameVariable: 'NPM_USERNAME')]) {
                         appImage = docker.build("${FULL_IMAGE_NAME}", "--network=host --build-arg NPM_USERNAME=${NPM_USERNAME} --build-arg NPM_PASSWORD=${NPM_PASSWORD} -f Dockerfile .")
                     }
