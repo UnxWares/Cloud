@@ -1,18 +1,31 @@
-# Stage 1: Build assets with pnpm
-FROM node:22-alpine AS frontend-builder
-ARG GH_ORG_PACKAGES
+# Stage 1: Build assets with node
+FROM node:22 AS frontend-builder
+ARG NPM_USERNAME
+ARG NPM_PASSWORD
+
+# Force IPv4 priority at the system level for the resolver
+RUN echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf
+
+# Force IPv4 priority for Node.js
+ENV NODE_OPTIONS="--dns-result-order=ipv4first"
+
 WORKDIR /app
 
 # Install pnpm
 RUN npm install -g pnpm
 
-# Authenticate for private packages if secret is provided
-RUN if [ -n "$GH_ORG_PACKAGES" ]; then \
-    echo "//npm.pkg.github.com/:_authToken=${GH_ORG_PACKAGES}" > ~/.npmrc; \
+# Copy package files and .npmrc
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* .npmrc ./
+
+# Authenticate for private packages (Repoflow)
+RUN if [ -n "$NPM_USERNAME" ] && [ -n "$NPM_PASSWORD" ]; then 
+    AUTH=$(node -e "console.log(Buffer.from('$NPM_USERNAME:$NPM_PASSWORD').toString('base64'))"); 
+    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:_auth=${AUTH}" >> .npmrc; 
+    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:always-auth=true" >> .npmrc; 
+    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:email=ci@unxwares.com" >> .npmrc; 
     fi
 
-# Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
+# Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy source files
@@ -20,8 +33,14 @@ COPY . .
 RUN pnpm run build
 
 # Stage 2: Install PHP dependencies
-FROM dunglas/frankenphp:1.4-php8.4-alpine AS php-builder
+FROM dunglas/frankenphp:1.4-php8.4 AS php-builder
 WORKDIR /app
+
+# Force IPv4 et installe les outils de décompression + git
+RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 && 
+    echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf && 
+    apt-get update && apt-get install -y unzip git --no-install-recommends && 
+    rm -rf /var/lib/apt/lists/*
 
 # Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -31,16 +50,20 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
 # Stage 3: Final image
-FROM dunglas/frankenphp:1.4-php8.4-alpine AS final
+FROM dunglas/frankenphp:1.4-php8.4 AS final
+
+# Force IPv4
+RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 && 
+    echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf
 
 # Standard PHP extension dependencies
-RUN install-php-extensions \
-    pcntl \
-    bcmath \
-    gd \
-    intl \
-    opcache \
-    pdo_pgsql \
+RUN install-php-extensions 
+    pcntl 
+    bcmath 
+    gd 
+    intl 
+    opcache 
+    pdo_pgsql 
     zip
 
 # App working directory
