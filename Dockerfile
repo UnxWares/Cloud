@@ -18,11 +18,11 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* .npmrc ./
 
 # Authenticate for private packages (Repoflow)
-RUN if [ -n "$NPM_USERNAME" ] && [ -n "$NPM_PASSWORD" ]; then 
-    AUTH=$(node -e "console.log(Buffer.from('$NPM_USERNAME:$NPM_PASSWORD').toString('base64'))"); 
-    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:_auth=${AUTH}" >> .npmrc; 
-    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:always-auth=true" >> .npmrc; 
-    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:email=ci@unxwares.com" >> .npmrc; 
+RUN if [ -n "$NPM_USERNAME" ] && [ -n "$NPM_PASSWORD" ]; then  \
+    AUTH=$(node -e "console.log(Buffer.from('$NPM_USERNAME:$NPM_PASSWORD').toString('base64'))");  \
+    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:_auth=${AUTH}" >> .npmrc;  \
+    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:always-auth=true" >> .npmrc;  \
+    echo "//lib.external.infra.unxwares.com/api/npm/unxwares/ui-js/:email=ci@unxwares.com" >> .npmrc;  \
     fi
 
 # Install dependencies
@@ -38,9 +38,9 @@ WORKDIR /app
 
 # Force IPv4 et installe les outils de décompression + git
 RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 && 
-    echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf && 
-    apt-get update && apt-get install -y unzip git --no-install-recommends && 
-    rm -rf /var/lib/apt/lists/*
+    echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf &&  \
+    apt-get update && apt-get install -y unzip git --no-install-recommends &&  \
+    rm -rf /var/lib/apt/lists/* \
 
 # Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -54,17 +54,17 @@ FROM dunglas/frankenphp:1.4-php8.4 AS final
 
 # Force IPv4
 RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 && 
-    echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf
+    echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf \
 
 # Standard PHP extension dependencies
 RUN install-php-extensions 
-    pcntl 
-    bcmath 
-    gd 
-    intl 
-    opcache 
-    pdo_pgsql 
-    zip
+    pcntl  \
+    bcmath  \
+    gd  \
+    intl  \
+    opcache  \
+    pdo_pgsql  \
+    zip \
 
 # App working directory
 WORKDIR /app
