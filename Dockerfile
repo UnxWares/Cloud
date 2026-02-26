@@ -55,7 +55,7 @@ COPY --from=php-builder /app/vendor ./vendor
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/conf.d"
+#ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/conf.d"
 
 COPY Caddyfile /etc/caddy/Caddyfile
 RUN chown -R www-data:www-data storage bootstrap/cache
